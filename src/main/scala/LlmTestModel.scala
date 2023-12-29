@@ -34,5 +34,4 @@ object LlmTestModel:
         MessageSpec(role = ChatRole.User, content = inputText))
       service.createChatCompletion(messages = message, settings = createChatCompletionSettings
       ).map { chatCompletion =>
-      {System.out.println("passato")
-        modelObservers.foreach(obs => obs.modelResponse(chatCompletion.choices.head.message.content))}}
+        modelObservers.foreach(obs => obs.modelResponse(chatCompletion.choices.head.message.content))}
