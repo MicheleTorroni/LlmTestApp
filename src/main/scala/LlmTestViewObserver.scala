@@ -1,6 +1,7 @@
 trait LlmTestViewObserver :
-  def produceCode(inputText: String, llmModel: String, programmingLanguage: String): Unit
-  def createOpenAiService(openAiKey: String): Unit
+  def produceResponse(inputText: String): Unit
+  def createOpenAiService(myApiKey: String): Unit
   def createLocalService(address: String): Unit
   def runCommand(command: String): Unit
+  def initializeChat(llmModel: String, programmingLanguage: String): Unit
 

@@ -25,7 +25,6 @@ object LlmTestView:
       columns = 50
       lineWrap = true
       wordWrap = true
-
     val outputLabel: Label = new Label("Output: ")
     val outputField: TextArea = new TextArea:
       rows = 30
@@ -52,6 +51,9 @@ object LlmTestView:
     val modelsComboBox = new ComboBox(models)
     val languageLabel = new Label("Language: ")
     val programmingLanguagesComboBox = new ComboBox(programmingLanguages)
+    val initializeChatButton: Button = new Button:
+      text = "INITIALIZE CHAT"
+      enabled = false
     val produceCodeButton: Button = new Button:
       text = "PRODUCE CODE"
       enabled = false
@@ -84,7 +86,7 @@ object LlmTestView:
               contents += addressField
               contents += new GridPanel(1, 1):
                 contents += createLocalServiceButton
-          contents += new GridPanel(5, 1):
+          contents += new GridPanel(3, 1):
             contents += generalLabel
             contents += new BoxPanel(Orientation.Horizontal):
               contents += modelLabel
@@ -92,36 +94,43 @@ object LlmTestView:
             contents += new BoxPanel(Orientation.Horizontal):
               contents += languageLabel
               contents += programmingLanguagesComboBox
+          contents += new GridPanel(3, 1):
             contents += blankSpace
+            contents += initializeChatButton
             contents += produceCodeButton
 
-    listenTo(produceCodeButton, createOpenAiServiceButton, createLocalServiceButton, runCommand)
+    listenTo(produceCodeButton, initializeChatButton, createOpenAiServiceButton, createLocalServiceButton, runCommand)
 
     reactions += {
       case ButtonClicked(`produceCodeButton`) =>
         viewObservers.foreach(obs =>
-          obs.produceCode(inputField.text, modelsComboBox.selection.item, programmingLanguagesComboBox.selection.item))
+          obs.produceResponse(inputField.text))
         produceCodeButton.enabled = false
+      case ButtonClicked(`initializeChatButton`) =>
+        viewObservers.foreach(obs =>
+          obs.initializeChat(modelsComboBox.selection.item, programmingLanguagesComboBox.selection.item))
+        produceCodeButton.enabled = true
       case ButtonClicked(`createOpenAiServiceButton`) =>
         viewObservers.foreach(obs =>
           obs.createOpenAiService(openAiApiKeyField.text))
-        produceCodeButton.enabled = true
+        initializeChatButton.enabled = true
         createOpenAiServiceButton.enabled = false
         createLocalServiceButton.enabled = true
       case ButtonClicked(`createLocalServiceButton`) =>
         viewObservers.foreach(obs =>
           obs.createLocalService(addressField.text))
         produceCodeButton.enabled = true
+        initializeChatButton.enabled = true
         createLocalServiceButton.enabled = false
         createOpenAiServiceButton.enabled = true
       case ButtonClicked(`runCommand`) =>
         viewObservers.foreach(obs => obs.runCommand(commandField.text))
     }
 
-    def setOutputText(outputText: String): Unit =
+    override def setOutputText(outputText: String): Unit =
       outputField.text = outputText
       produceCodeButton.enabled = true
-    def setOpenAiApiKey(apiKey: String): Unit = openAiApiKeyField.text = apiKey
-    def setAddressField(address: String): Unit = addressField.text = address
-    def setCommandField(command: String): Unit = commandField.text = command
-    def addObserver(viewObserver: LlmTestViewObserver): Unit = viewObservers = viewObserver :: viewObservers
+    override def setOpenAiApiKey(apiKey: String): Unit = openAiApiKeyField.text = apiKey
+    override def setAddressField(address: String): Unit = addressField.text = address
+    override def setCommandField(command: String): Unit = commandField.text = command
+    override def addObserver(viewObserver: LlmTestViewObserver): Unit = viewObservers = viewObserver :: viewObservers
