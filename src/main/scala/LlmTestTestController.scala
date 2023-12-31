@@ -8,6 +8,7 @@ trait LlmTestTestController extends LlmTestModelObserver, LlmTestViewObserver:
   def createLocalService(address: String): Unit
   def runCommand(command: String): Unit
   def initializeChat(llmModel: String, programmingLanguage: String): Unit
+  def getChatLog() : String
 
 object LlmTestTestController extends App:
   def apply(): LlmTestTestController = LlmTestTestControllerImpl()
@@ -33,3 +34,4 @@ object LlmTestTestController extends App:
     override def initializeChat(llmModel: String, programmingLanguage: String): Unit =
       myModel.initializeChat(llmModel, config.getString("basePrompt")+programmingLanguage)
     override def runCommand(command: String): Unit = myModel.runCommand(command)
+    override def getChatLog() : String = myModel.getChatLog()

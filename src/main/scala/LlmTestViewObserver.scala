@@ -4,4 +4,4 @@ trait LlmTestViewObserver :
   def createLocalService(address: String): Unit
   def runCommand(command: String): Unit
   def initializeChat(llmModel: String, programmingLanguage: String): Unit
-
+  def getChatLog() : String

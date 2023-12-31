@@ -54,6 +54,9 @@ object LlmTestView:
     val initializeChatButton: Button = new Button:
       text = "INITIALIZE CHAT"
       enabled = false
+    val chatLogButton: Button = new Button:
+      text = "CHAT LOG"
+      enabled = false
     val produceCodeButton: Button = new Button:
       text = "PRODUCE CODE"
       enabled = false
@@ -86,7 +89,7 @@ object LlmTestView:
               contents += addressField
               contents += new GridPanel(1, 1):
                 contents += createLocalServiceButton
-          contents += new GridPanel(3, 1):
+          contents += new GridPanel(4, 1):
             contents += generalLabel
             contents += new BoxPanel(Orientation.Horizontal):
               contents += modelLabel
@@ -95,11 +98,18 @@ object LlmTestView:
               contents += languageLabel
               contents += programmingLanguagesComboBox
           contents += new GridPanel(3, 1):
+            contents += new GridPanel(1, 2):
+              contents += initializeChatButton
+              contents += chatLogButton
             contents += blankSpace
-            contents += initializeChatButton
             contents += produceCodeButton
 
-    listenTo(produceCodeButton, initializeChatButton, createOpenAiServiceButton, createLocalServiceButton, runCommand)
+    listenTo(produceCodeButton,
+      initializeChatButton,
+      chatLogButton,
+      createOpenAiServiceButton,
+      createLocalServiceButton,
+      runCommand)
 
     reactions += {
       case ButtonClicked(`produceCodeButton`) =>
@@ -110,6 +120,11 @@ object LlmTestView:
         viewObservers.foreach(obs =>
           obs.initializeChat(modelsComboBox.selection.item, programmingLanguagesComboBox.selection.item))
         produceCodeButton.enabled = true
+        chatLogButton.enabled = true
+      case ButtonClicked(`chatLogButton`) =>
+        viewObservers.foreach(obs =>{
+          inputField.text = ""
+          inputField.text = inputField.text + obs.getChatLog()})
       case ButtonClicked(`createOpenAiServiceButton`) =>
         viewObservers.foreach(obs =>
           obs.createOpenAiService(openAiApiKeyField.text))

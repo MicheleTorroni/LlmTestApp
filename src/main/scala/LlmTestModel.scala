@@ -14,6 +14,7 @@ trait LlmTestModel:
   def runCommand(command: String): Unit
   def addObserver(modelObserver: LlmTestModelObserver): Unit
   def initializeChat(llmModel: String, basePrompt: String): Unit
+  def getChatLog(): String
 
 object LlmTestModel:
   def apply(): LlmTestModel = LlmTestModelImpl()
@@ -29,14 +30,13 @@ object LlmTestModel:
     override def createOpenAiService(myApiKey: String): Unit = service = OpenAIServiceFactory(apiKey = myApiKey)
     override def createLocalService(address: String): Unit = service = OpenAICoreServiceFactory(address)
     override def initializeChat(llmModel: String, basePrompt: String): Unit =
+      message = null
       addMessage(basePrompt, ChatRole.System)
       createChatCompletionSettings = CreateChatCompletionSettings(model = llmModel)
-      println(message)
     override def runCommand(command: String): Unit = Process(command).run()
     override def addObserver(modelObserver: LlmTestModelObserver): Unit = modelObservers = modelObserver :: modelObservers
     override def produceResponse(inputText: String): Unit =
       addMessage(inputText, ChatRole.User)
-      println(message)
       service.createChatCompletion(messages = message, settings = createChatCompletionSettings
       ).map { chatCompletion => {
         val response = chatCompletion.choices.head.message.content
@@ -45,3 +45,11 @@ object LlmTestModel:
     def addMessage(msg: String, msgRole: ChatRole): Unit = message = message match
         case null => Seq(MessageSpec(role = msgRole, content = msg))
         case _ => message :+ MessageSpec(role = msgRole, content = msg)
+    override def getChatLog(): String =
+      var chatLog : String = ""
+      message.foreach(msg =>  msg.role match
+        case ChatRole.System => chatLog = chatLog + "__________BASEPROMPT__________" + "\n" + msg.content
+        case ChatRole.User => chatLog = chatLog  + "\n\n" + "__________USER__________" + "\n" +msg.content
+        case ChatRole.Assistant => chatLog = chatLog + "\n\n" + "__________ASSISTANT__________" + "\n" +msg.content
+        case _ => chatLog = "an error occurred, tip : reset conversation")
+      chatLog
