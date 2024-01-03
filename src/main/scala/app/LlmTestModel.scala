@@ -1,7 +1,9 @@
+package app
+
 import akka.actor.ActorSystem
 import akka.stream.Materializer
-import io.cequence.openaiscala.domain.{ChatRole, MessageSpec, ModelId}
 import io.cequence.openaiscala.domain.settings.{CreateChatCompletionSettings, CreateCompletionSettings}
+import io.cequence.openaiscala.domain.{ChatRole, MessageSpec, ModelId}
 import io.cequence.openaiscala.service.{OpenAICoreService, OpenAICoreServiceFactory, OpenAIService, OpenAIServiceFactory}
 
 import scala.concurrent.{ExecutionContext, ExecutionContextExecutor}

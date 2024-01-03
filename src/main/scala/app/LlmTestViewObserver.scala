@@ -1,3 +1,5 @@
+package app
+
 trait LlmTestViewObserver :
   def produceResponse(inputText: String): Unit
   def createOpenAiService(myApiKey: String): Unit

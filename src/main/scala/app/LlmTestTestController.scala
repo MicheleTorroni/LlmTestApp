@@ -1,4 +1,7 @@
+package app
+
 import com.typesafe.config.{Config, ConfigFactory}
+
 import scala.jdk.CollectionConverters.*
 
 trait LlmTestTestController extends LlmTestModelObserver, LlmTestViewObserver:

@@ -1,6 +1,8 @@
-import scala.swing.{BoxPanel, *}
+package app
+
+import scala.swing.Swing.pair2Dimension
 import scala.swing.event.ButtonClicked
-import swing.Swing.pair2Dimension
+import scala.swing.*
 
 trait LlmTestView extends MainFrame:
   def setOutputText(outputText: String): Unit
