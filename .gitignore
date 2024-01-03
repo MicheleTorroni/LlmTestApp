@@ -3,5 +3,5 @@
 project/
 target/
 src/main/resources/TestCode
-src/main/scala/MyTest
-src/test/scala/MyTest
+src/main/scala/MyTest/PastOOPExams
+src/test/scala/MyTest/PastOOPExams
