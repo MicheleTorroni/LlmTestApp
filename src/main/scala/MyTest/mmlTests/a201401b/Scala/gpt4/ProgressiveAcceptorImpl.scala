@@ -33,8 +33,8 @@ class ProgressiveAcceptorImpl[X] extends ProgressiveAcceptor[X] {
     require(size > 0, "Size is not defined")
     if (pos >= size) return false
     if (pos > 0 && elements.contains(pos - 1) && !progressiveFilter.get.isNextOK(elements(pos - 1), elem)) return false
-    elements = elements.filterKeys(_ <= pos)
-    elements(pos) = elem
+//    elements = elements.filterKeys(_ <= pos)
+//    elements(pos) = elem
     true
   }
 
