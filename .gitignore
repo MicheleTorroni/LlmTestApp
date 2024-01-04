@@ -2,6 +2,5 @@
 .bsp
 project/
 target/
-src/main/resources/TestCode
-src/main/scala/MyTest/PastOOPExams
-src/test/scala/MyTest/PastOOPExams
+src/main/scala/PastOOPExams/
+src/test/scala/PastOOPExams/
