@@ -2,6 +2,7 @@ package mmlTests.a201706.java.solMV;
 
 import mmlTests.a201706.java.Sequence;
 import mmlTests.a201706.java.SequenceHelpers;
+import mmlTests.shared.java.Pair;
 
 import java.util.Iterator;
 import java.util.List;

@@ -1,6 +1,6 @@
 package mmlTests.a201706.java;
 
-import mmlTests.a201706.java.solMV.Pair;
+import mmlTests.shared.java.Pair;
 
 import java.util.Arrays;
 import java.util.List;

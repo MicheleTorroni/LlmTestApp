@@ -1,8 +1,8 @@
 package mmlTests.a201706;
 
-import mmlTests.a201706.java.solMV.Pair;
-import mmlTests.a201706.java.SequenceHelpers;
-import mmlTests.a201706.java.solMV.SequenceHelpersImpl;
+import mmlTests.shared.scala.Pair;
+import mmlTests.a201706.scala.SequenceHelpers;
+import mmlTests.a201706.scala.gpt4.SequenceHelpersImpl;
 
 import java.util.*;
 import static org.junit.Assert.*;
