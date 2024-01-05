@@ -4,7 +4,7 @@ import com.typesafe.config.{Config, ConfigFactory}
 
 import scala.jdk.CollectionConverters.*
 
-trait LlmTestTestController extends LlmTestModelObserver, LlmTestViewObserver:
+trait LlmTestController extends LlmTestModelObserver, LlmTestViewObserver:
   def modelResponse(outputText: String): Unit
   def produceResponse(inputText: String): Unit
   def createOpenAiService(myApiKey: String): Unit
@@ -13,10 +13,10 @@ trait LlmTestTestController extends LlmTestModelObserver, LlmTestViewObserver:
   def initializeChat(llmModel: String, programmingLanguage: String): Unit
   def getChatLog() : String
 
-object LlmTestTestController extends App:
-  def apply(): LlmTestTestController = LlmTestTestControllerImpl()
+object LlmTestController extends App:
+  def apply(): LlmTestController = LlmTestControllerImpl()
 
-  case class LlmTestTestControllerImpl() extends LlmTestTestController :
+  case class LlmTestControllerImpl() extends LlmTestController :
     val myModel: LlmTestModel = LlmTestModel()
     myModel.addObserver(this)
 
