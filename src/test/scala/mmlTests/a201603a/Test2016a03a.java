@@ -1,8 +1,8 @@
 package mmlTests.a201603a;
 
-import mmlTests.a201603a.scalaTest.Bag;
-import mmlTests.a201603a.scalaTest.BagFactory;
-import mmlTests.a201603a.scalaTest.gpt4.BagFactoryImpl;
+import mmlTests.a201603a.javaTest.Bag;
+import mmlTests.a201603a.javaTest.BagFactory;
+import mmlTests.a201603a.javaTest.gpt4.BagFactoryImpl;
 
 
 import static org.junit.Assert.*;
