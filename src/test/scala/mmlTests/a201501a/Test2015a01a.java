@@ -1,10 +1,11 @@
 package mmlTests.a201501a;
 
-import static mmlTests.a201501a.scala.CoursesCalendar.Day.*;
-import static mmlTests.a201501a.scala.CoursesCalendar.Room.*;
-import mmlTests.shared.scala.Pair;
-import mmlTests.a201501a.scala.CoursesCalendar;
-import mmlTests.a201501a.scala.gpt35turbo.CoursesCalendarImpl;
+import static mmlTests.a201501a.java.CoursesCalendar.Day.*;
+import static mmlTests.a201501a.java.CoursesCalendar.Room.*;
+import mmlTests.a201501a.java.CoursesCalendar;
+import mmlTests.a201501a.java.solMV.*;
+import mmlTests.shared.java.Pair;
+import mmlTests.a201501a.java.gpt35turbo.CoursesCalendarImpl;
 
 import static org.junit.Assert.*;
 import static org.hamcrest.CoreMatchers.*;
@@ -28,7 +29,7 @@ public class Test2015a01a {
 		// slot disponibili per la prenotazione in generale: esattamente 9,10,11,12,14,15,16,17
 		CoursesCalendar cc = new CoursesCalendarImpl();
 		assertEquals(cc.possibleSlots().size(),8);
-		//assertThat(cc.possibleSlots(),hasItems(9,10,11,12,14,15,16,17));
+		assertThat(cc.possibleSlots(),hasItems(9,10,11,12,14,15,16,17));
 	}
 	
 	@org.junit.Test
