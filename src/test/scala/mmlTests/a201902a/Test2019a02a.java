@@ -2,7 +2,7 @@ package mmlTests.a201902a;
 
 import mmlTests.a201902a.scala.Workflow;
 import mmlTests.a201902a.scala.WorkflowsFactory;
-import mmlTests.a201902a.scala.gpt35turbo.WorkflowsFactoryImpl;
+import mmlTests.a201902a.scala.gpt4.WorkflowsFactoryImpl;
 
 import static org.junit.Assert.*;
 import java.util.*;
