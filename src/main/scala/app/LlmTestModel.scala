@@ -9,18 +9,61 @@ import io.cequence.openaiscala.service.{OpenAICoreService, OpenAICoreServiceFact
 import scala.concurrent.{ExecutionContext, ExecutionContextExecutor}
 import scala.sys.process.Process
 
+/**
+ * Main model trait of the application.
+ * Defines the core functionalities of the model.
+ */
 trait LlmTestModel:
+  /**
+   * Produces a response based on the input text.
+   * @param inputText Input text.
+   */
   def produceResponse(inputText: String): Unit
+  /**
+   * Creates an OpenAI service using the specified API key.
+   * @param myApiKey OpenAI API key.
+   */
   def createOpenAiService(myApiKey: String): Unit
+  /**
+   * Creates a local service using the specified address.
+   * @param address Local service address.
+   */
   def createLocalService(address: String): Unit
+  /**
+   * Executes a specified command.
+   * @param command Command to execute.
+   */
   def runCommand(command: String): Unit
+  /**
+   * Adds an observer to the model.
+   * @param modelObserver Model observer to add.
+   */
   def addObserver(modelObserver: LlmTestModelObserver): Unit
+  /**
+   * Initializes a chat session with the specified model and base prompt.
+   * @param llmModel Language model.
+   * @param basePrompt Base prompt for the chat.
+   */
   def initializeChat(llmModel: String, basePrompt: String): Unit
+  /**
+   * Retrieves the chat log.
+   * @return Chat log.
+   */
   def getChatLog(): String
 
+/**
+ * Companion object for the LlmTestModel trait.
+ * Provides a construction method to create an instance of the model.
+ */
 object LlmTestModel:
+  /**
+   * Creates an instance of the llmTestModel.
+   **/
   def apply(): LlmTestModel = LlmTestModelImpl()
 
+  /**
+   * Model implementation.
+   */
   private case class LlmTestModelImpl() extends LlmTestModel:
     implicit val ec: ExecutionContextExecutor = ExecutionContext.global
     implicit val materializer: Materializer = Materializer(ActorSystem())

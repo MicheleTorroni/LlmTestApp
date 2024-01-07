@@ -4,16 +4,55 @@ import scala.swing.Swing.pair2Dimension
 import scala.swing.event.ButtonClicked
 import scala.swing.*
 
+/**
+ * View trait representing the GUI of the application.
+ * Defines GUI components and interaction functionalities.
+ */
 trait LlmTestView extends MainFrame:
+  /**
+   * Sets the output text in the view.
+   * @param outputText Output text to be displayed.
+   */
   def setOutputText(outputText: String): Unit
+  /**
+   * Sets the OpenAI API key field in the view.
+   * @param apiKey OpenAI API key.
+   */
   def setOpenAiApiKey(apiKey: String): Unit
+  /**
+   * Sets the address field in the view.
+   * @param address Address to be set.
+   */
   def setAddressField(address: String): Unit
+  /**
+   * Sets the command field in the view.
+   * @param command Command to be set.
+   */
   def setCommandField(command: String): Unit
+  /**
+   * Adds an observer to the view.
+   * @param viewObserver View observer to add.
+   */
   def addObserver(viewObserver: LlmTestViewObserver): Unit
 
+/**
+ * Companion object for the LlmTestView trait.
+ * Provides a construction method to create an instance of the view.
+ */
 object LlmTestView:
+  /**
+   * Creates an instance of the LlmTestView.
+   * @param models List of available language models.
+   * @param programmingLanguages List of available programming languages.
+   * @return LlmTestView instance.
+   */
   def apply(models: List[String], programmingLanguages: List[String]):LlmTestView = LlmTestViewImpl(models, programmingLanguages)
 
+  /**
+   * Implementation of the LlmTestView.
+   * @param models List of available language models.
+   * @param programmingLanguages List of available programming languages.
+   */
   private case class LlmTestViewImpl(models: List[String], programmingLanguages: List[String]) extends LlmTestView:
     var viewObservers : List[LlmTestViewObserver] = List()
     title = "LLM Code Generator"

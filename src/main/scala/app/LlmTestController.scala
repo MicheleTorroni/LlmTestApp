@@ -4,18 +4,61 @@ import com.typesafe.config.{Config, ConfigFactory}
 
 import scala.jdk.CollectionConverters.*
 
+/**
+ * Main controller trait of the application.
+ * Defines the core functionalities of the controller.
+ */
 trait LlmTestController extends LlmTestModelObserver, LlmTestViewObserver:
+  /**
+   * Handles the model's response.
+   * @param outputText Output text from the model.
+   */
   def modelResponse(outputText: String): Unit
+  /**
+   * Produces a response based on the provided input.
+   * @param inputText Input text.
+   */
   def produceResponse(inputText: String): Unit
+  /**
+   * Creates an OpenAI service using the specified API key.
+   * @param myApiKey OpenAI API key.
+   */
   def createOpenAiService(myApiKey: String): Unit
+  /**
+   * Creates a local service using the specified address.
+   * @param address Local service address.
+   */
   def createLocalService(address: String): Unit
+  /**
+   * Executes a specified command.
+   * @param command Command to execute.
+   */
   def runCommand(command: String): Unit
+  /**
+   * Initializes a chat session with the specified model and programming language.
+   * @param llmModel Language model.
+   * @param programmingLanguage Programming language.
+   */
   def initializeChat(llmModel: String, programmingLanguage: String): Unit
+  /**
+   * Retrieves the chat log.
+   * @return Chat log.
+   */
   def getChatLog() : String
 
+/**
+ * Companion object for the LlmTestController trait.
+ * Provides a construction method to create an instance of the controller.
+ */
 object LlmTestController extends App:
+  /**
+   * Creates an instance of the llmTestController.
+   **/
   def apply(): LlmTestController = LlmTestControllerImpl()
 
+  /**
+   * Controller implementation.
+   */
   case class LlmTestControllerImpl() extends LlmTestController :
     val myModel: LlmTestModel = LlmTestModel()
     myModel.addObserver(this)
