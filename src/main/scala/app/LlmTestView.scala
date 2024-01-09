@@ -165,7 +165,7 @@ object LlmTestView:
       case ButtonClicked(`chatLogButton`) =>
         viewObservers.foreach(obs =>{
           inputField.text = ""
-          inputField.text = inputField.text + obs.getChatLog()})
+          inputField.text = inputField.text + obs.getChatLog})
       case ButtonClicked(`createOpenAiServiceButton`) =>
         viewObservers.foreach(obs =>
           obs.createOpenAiService(openAiApiKeyField.text))

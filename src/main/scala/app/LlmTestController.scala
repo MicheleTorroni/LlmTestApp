@@ -44,13 +44,13 @@ trait LlmTestController extends LlmTestModelObserver, LlmTestViewObserver:
    * Retrieves the chat log.
    * @return Chat log.
    */
-  def getChatLog() : String
+  def getChatLog : String
 
 /**
  * Companion object for the LlmTestController trait.
  * Provides a construction method to create an instance of the controller.
  */
-object LlmTestController extends App:
+object LlmTestController:
   /**
    * Creates an instance of the llmTestController.
    **/
@@ -60,8 +60,8 @@ object LlmTestController extends App:
    * Controller implementation.
    */
   case class LlmTestControllerImpl() extends LlmTestController :
-    val myModel: LlmTestModel = LlmTestModel()
-    myModel.addObserver(this)
+    val model: LlmTestModel = LlmTestModel()
+    model.addObserver(this)
 
     val config: Config = ConfigFactory.load("config")
     val view: LlmTestView = LlmTestView(
@@ -74,10 +74,10 @@ object LlmTestController extends App:
     view.visible = true
 
     override def modelResponse(outputText: String): Unit = view.setOutputText(outputText)
-    override def produceResponse(inputText: String): Unit = myModel.produceResponse(inputText)
-    override def createOpenAiService(myApiKey: String): Unit = myModel.createOpenAiService(myApiKey)
-    override def createLocalService(address: String): Unit = myModel.createLocalService(address)
+    override def produceResponse(inputText: String): Unit = model.produceResponse(inputText)
+    override def createOpenAiService(myApiKey: String): Unit = model.createOpenAiService(myApiKey)
+    override def createLocalService(address: String): Unit = model.createLocalService(address)
     override def initializeChat(llmModel: String, programmingLanguage: String): Unit =
-      myModel.initializeChat(llmModel, config.getString("basePrompt")+programmingLanguage)
-    override def runCommand(command: String): Unit = myModel.runCommand(command)
-    override def getChatLog() : String = myModel.getChatLog()
+      model.initializeChat(llmModel, config.getString("basePrompt")+programmingLanguage)
+    override def runCommand(command: String): Unit = model.runCommand(command)
+    override def getChatLog : String = model.getChatLog

@@ -35,4 +35,4 @@ trait LlmTestViewObserver :
    * Retrieves the chat log.
    * @return String representing the chat log.
    */
-  def getChatLog() : String
+  def getChatLog: String

@@ -49,7 +49,7 @@ trait LlmTestModel:
    * Retrieves the chat log.
    * @return Chat log.
    */
-  def getChatLog(): String
+  def getChatLog: String
 
 /**
  * Companion object for the LlmTestModel trait.
@@ -90,7 +90,7 @@ object LlmTestModel:
     def addMessage(msg: String, msgRole: ChatRole): Unit = message = message match
         case null => Seq(MessageSpec(role = msgRole, content = msg))
         case _ => message :+ MessageSpec(role = msgRole, content = msg)
-    override def getChatLog(): String =
+    override def getChatLog: String =
       var chatLog : String = ""
       message.foreach(msg =>  msg.role match
         case ChatRole.System => chatLog = chatLog + "__________BASEPROMPT__________" + "\n" + msg.content
