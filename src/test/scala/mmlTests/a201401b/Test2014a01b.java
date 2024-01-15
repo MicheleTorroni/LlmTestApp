@@ -2,8 +2,9 @@ package mmlTests.a201401b;
 
 import mmlTests.a201401b.scala.Aggregator;
 import mmlTests.a201401b.scala.ProgressiveAcceptor;
-import mmlTests.a201401b.scala.gpt4.ProgressiveAcceptorImpl;
 import mmlTests.a201401b.scala.ProgressiveFilter;
+import mmlTests.a201401b.scala.gpt35turboAdvanced.ProgressiveAcceptorImpl;
+
 
 import static org.junit.Assert.*;
 
