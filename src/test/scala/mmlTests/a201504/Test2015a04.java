@@ -1,8 +1,8 @@
 package mmlTests.a201504;
 
-import mmlTests.a201504.java.Tree;
-import mmlTests.a201504.java.TreeFactory;
-import mmlTests.a201504.java.gpt35turbo.TreeFactoryImpl;
+import mmlTests.a201504.scala.Tree;
+import mmlTests.a201504.scala.TreeFactory;
+import mmlTests.a201504.scala.gpt4.TreeFactoryImpl;
 
 import static org.junit.Assert.*;
 
