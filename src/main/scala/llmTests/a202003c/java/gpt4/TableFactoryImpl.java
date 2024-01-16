@@ -1,74 +1,77 @@
 package llmTests.a202003c.java.gpt4;
 
+import llmTests.a202003c.java.Table;
+import llmTests.a202003c.java.TableFactory;
+import llmTests.shared.java.*;
+
 import java.util.*;
 import java.util.function.BiFunction;
-import llmTests.shared.java.Pair;
-import llmTests.a202003c.java.*;
 
 public class TableFactoryImpl implements TableFactory {
 
     @Override
     public <R, C, V> Table<R, C, V> fromMap(Map<Pair<R, C>, V> map) {
-        return new TableImpl<>(map);
+        final Map<R, Map<C, V>> rowMap = new HashMap<>();
+        for(Pair<R,C> pair : map.keySet()){
+            rowMap.computeIfAbsent(pair.getFst(), k -> new HashMap<>()).put(pair.getSnd(), map.get(pair));
+        }
+        return new TableImpl<>(rowMap);
     }
 
     @Override
     public <R, C, V> Table<R, C, V> fromFunction(Set<R> rows, Set<C> columns, BiFunction<R, C, V> valueFunction) {
-        Map<Pair<R, C>, V> map = new HashMap<>();
-        for (R row : rows) {
-            for (C column : columns) {
-                V value = valueFunction.apply(row, column);
-                map.put(new Pair<>(row, column), value);
+        final Map<R, Map<C, V>> rowMap = new HashMap<>();
+        for(R row : rows){
+            for(C column : columns){
+                rowMap.computeIfAbsent(row, k -> new HashMap<>()).put(column, valueFunction.apply(row, column));
             }
         }
-        return new TableImpl<>(map);
+        return new TableImpl<>(rowMap);
     }
 
     @Override
     public <G> Table<G, G, Boolean> graph(Set<Pair<G, G>> edges) {
-        Map<Pair<G, G>, Boolean> map = new HashMap<>();
-        for (Pair<G, G> edge : edges) {
-            map.put(edge, true);
+        final Map<G, Map<G, Boolean>> rowMap = new HashMap<>();
+        for(Pair<G,G> edge : edges){
+            rowMap
+                    .computeIfAbsent(edge.getFst(), k -> new HashMap<>())
+                    .put(edge.getSnd(), true);
         }
-        return new TableImpl<>(map);
+        return new TableImpl<>(rowMap);
     }
 
     @Override
     public <V> Table<Integer, Integer, V> squareMatrix(V[][] values) {
-        Map<Pair<Integer, Integer>, V> map = new HashMap<>();
-        for (int i = 0; i < values.length; i++) {
-            for (int j = 0; j < values[i].length; j++) {
-                map.put(new Pair<>(i, j), values[i][j]);
+        final Map<Integer, Map<Integer, V>> rowMap = new HashMap<>();
+        for(int i = 0; i < values.length; i++){
+            for(int j = 0; j < values[i].length; j++){
+                rowMap
+                        .computeIfAbsent(i, k -> new HashMap<>())
+                        .put(j, values[i][j]);
             }
         }
-        return new TableImpl<>(map);
+        return new TableImpl<>(rowMap);
     }
 
-    private static class TableImpl<R, C, V> implements Table<R, C, V> {
 
-        private final Map<R, Map<C, V>> table;
+    class TableImpl<R, C, V> implements Table<R, C, V> {
 
-        public TableImpl(Map<Pair<R, C>, V> map) {
-            this.table = new HashMap<>();
-            for (Map.Entry<Pair<R, C>, V> entry : map.entrySet()) {
-                Pair<R, C> pair = entry.getKey();
-                R row = pair.getFst();
-                C column = pair.getSnd();
-                V value = entry.getValue();
-                table.computeIfAbsent(row, k -> new HashMap<>()).put(column, value);
-            }
+        private final Map<R, Map<C, V>> rowMap;
+
+        TableImpl(Map<R, Map<C, V>> rowMap){
+            this.rowMap = rowMap;
         }
 
         @Override
         public Set<R> rows() {
-            return table.keySet();
+            return this.rowMap.keySet();
         }
 
         @Override
         public Set<C> columns() {
             Set<C> columns = new HashSet<>();
-            for (Map<C, V> row : table.values()) {
-                columns.addAll(row.keySet());
+            for(Map<C,V> columnMap : rowMap.values()) {
+                columns.addAll(columnMap.keySet());
             }
             return columns;
         }
@@ -76,38 +79,36 @@ public class TableFactoryImpl implements TableFactory {
         @Override
         public Map<C, Map<R, V>> asColumnMap() {
             Map<C, Map<R, V>> columnMap = new HashMap<>();
-            for (Map.Entry<R, Map<C, V>> entry : table.entrySet()) {
-                R row = entry.getKey();
-                Map<C, V> rowMap = entry.getValue();
-                for (Map.Entry<C, V> rowEntry : rowMap.entrySet()) {
-                    C column = rowEntry.getKey();
-                    V value = rowEntry.getValue();
-                    columnMap.computeIfAbsent(column, k -> new HashMap<>()).put(row, value);
+            for(R row : this.rowMap.keySet()){
+                for(C column : this.rowMap.get(row).keySet()){
+                    columnMap.computeIfAbsent(column, k -> new HashMap<>())
+                            .put(row, this.rowMap.get(row).get(column));
                 }
             }
             return columnMap;
+
         }
 
         @Override
         public Map<R, Map<C, V>> asRowMap() {
-            return table;
+            return this.rowMap;
         }
 
         @Override
         public Optional<V> getValue(R row, C column) {
-            Map<C, V> rowMap = table.get(row);
-            if (rowMap != null) {
-                V value = rowMap.get(column);
-                if (value != null) {
-                    return Optional.of(value);
-                }
+            if(rowMap.containsKey(row) && rowMap.get(row).containsKey(column)){
+                return Optional.of(rowMap.get(row).get(column));
             }
             return Optional.empty();
         }
 
         @Override
         public void putValue(R row, C column, V value) {
-            table.computeIfAbsent(row, k -> new HashMap<>()).put(column, value);
+            this.rowMap
+                    .computeIfAbsent(row, k -> new HashMap<>())
+                    .put(column, value);
+
         }
     }
+
 }

@@ -11,7 +11,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import llmTests.a202003c.java.*;
-import llmTests.a202003c.java.solMV.*;
+import llmTests.a202003c.java.gpt4.*;
 import llmTests.shared.java.Pair;
 
 public class Test2020a03c {
