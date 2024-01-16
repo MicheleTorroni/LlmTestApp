@@ -1,8 +1,8 @@
 package llmTests.a201902a;
 
-import llmTests.a201902a.scala.Workflow;
-import llmTests.a201902a.scala.WorkflowsFactory;
-import llmTests.a201902a.scala.gpt4.WorkflowsFactoryImpl;
+import llmTests.a201902a.java.Workflow;
+import llmTests.a201902a.java.WorkflowsFactory;
+import llmTests.a201902a.java.gpt4.WorkflowsFactoryImpl;
 
 import static org.junit.Assert.*;
 import java.util.*;

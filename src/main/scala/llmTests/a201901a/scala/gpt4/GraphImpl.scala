@@ -5,22 +5,18 @@ import llmTests.a201901a.scala.{Graph, GraphFactory}
 import java.util
 import java.util.stream.Stream
 import llmTests.shared.scala.Pair
+import scala.jdk.CollectionConverters._
 
-class GraphImpl[X](private var _nodes: util.Set[X] = new util.HashSet[X](),
-                   private var _edges: util.HashMap[X, util.HashSet[X]] = new util.HashMap[X, util.HashSet[X]]()) extends Graph[X] {
+class GraphImpl[X](val edges: Set[Pair[X, X]]) extends Graph[X] {
+  override def getNodes: util.Set[X] =
+    edges.flatMap(edge => Seq(edge.fst, edge.snd)).asJava
 
-  def nodes: util.Set[X] = _nodes
-  def nodes_=(value: util.Set[X]): Unit = _nodes = value
+  override def edgePresent(start: X, end: X): Boolean =
+    edges.contains(Pair(start, end))
 
-  def edges: util.HashMap[X, util.HashSet[X]] = _edges
-  def edges_=(value: util.HashMap[X, util.HashSet[X]]): Unit = _edges = value
-
-  override def getNodes: util.Set[X] = nodes
-
-  override def edgePresent(start: X, end: X): Boolean = edges.getOrDefault(start, new util.HashSet[X]()).contains(end)
-
-  override def getEdgesCount: Int = edges.values().stream().mapToInt(_.size()).sum()
+  override def getEdgesCount: Int =
+    edges.size
 
   override def getEdgesStream: Stream[Pair[X, X]] =
-    edges.entrySet().stream().flatMap { entry => entry.getValue.stream().map((v: X) => new Pair(entry.getKey, v))}
+    edges.toSeq.asJava.stream()
 }

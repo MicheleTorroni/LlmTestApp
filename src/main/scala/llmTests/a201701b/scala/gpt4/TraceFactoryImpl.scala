@@ -10,20 +10,26 @@ import java.util.{ArrayList, Iterator, Optional}
 
 class TraceFactoryImpl extends TraceFactory {
   override def fromSuppliers[X](sdeltaTime: Supplier[Integer], svalue: Supplier[X], size: Int): Trace[X] = {
-    val events = new ArrayList[Event[X]](size)
+    val events = new ArrayList[Event[X]]
     var time = 0
     for (_ <- 0 until size) {
-      events.add(new EventImpl[X](time, svalue.get()))
+      events.add(new EventImpl(time, svalue.get()))
       time += sdeltaTime.get()
     }
-    new TraceImpl[X](events)
+    new TraceImpl(events)
   }
+
   override def constant[X](sdeltaTime: Supplier[Integer], value: X, size: Int): Trace[X] = {
-    val svalue = new Supplier[X]() { override def get(): X = value }
+    val svalue = new Supplier[X]() {
+      override def get() = value
+    }
     fromSuppliers(sdeltaTime, svalue, size)
   }
+
   override def discrete[X](svalue: Supplier[X], size: Int): Trace[X] = {
-    val sdeltaTime = new Supplier[Integer]() { override def get(): Integer = 1 }
+    val sdeltaTime = new Supplier[Integer]() {
+      override def get() = 1
+    }
     fromSuppliers(sdeltaTime, svalue, size)
   }
 }

@@ -1,114 +1,131 @@
 package llmTests.a201901a.java.gpt4;
 
+import llmTests.a201901a.java.Graph;
+import llmTests.a201901a.java.GraphFactory;
+import llmTests.shared.java.Pair;
 import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import llmTests.a201901a.java.*;
-import llmTests.shared.java.Pair;
 
 public class GraphFactoryImpl implements GraphFactory {
 
     @Override
     public <X> Graph<X> createDirectedChain(List<X> nodes) {
-        return new GraphImpl<>(new HashSet<>(nodes), getEdges(nodes, false));
+        DirectedGraph<X> graph = new DirectedGraph<>(nodes);
+        for (int i = 0; i < nodes.size() - 1; i++) {
+            graph.addEdge(nodes.get(i), nodes.get(i + 1));
+        }
+        return graph;
     }
 
     @Override
     public <X> Graph<X> createBidirectionalChain(List<X> nodes) {
-        return new GraphImpl<>(new HashSet<>(nodes), getEdges(nodes, true));
+        DirectedGraph<X> graph = new DirectedGraph<>(nodes);
+        for (int i = 0; i < nodes.size() - 1; i++) {
+            graph.addEdge(nodes.get(i), nodes.get(i + 1));
+            graph.addEdge(nodes.get(i + 1), nodes.get(i));
+        }
+        return graph;
     }
 
     @Override
     public <X> Graph<X> createDirectedCircle(List<X> nodes) {
-        List<Pair<X,X>> edges = getEdges(nodes, false);
-        edges.add(new Pair<>(nodes.get(nodes.size()-1), nodes.get(0)));
-        return new GraphImpl<>(new HashSet<>(nodes), edges);
+        DirectedGraph<X> graph = (DirectedGraph<X>) createDirectedChain(nodes);
+        graph.addEdge(nodes.get(nodes.size() - 1), nodes.get(0));
+        return graph;
     }
 
     @Override
     public <X> Graph<X> createBidirectionalCircle(List<X> nodes) {
-        List<Pair<X,X>> edges = getEdges(nodes, true);
-        edges.add(new Pair<>(nodes.get(nodes.size()-1), nodes.get(0)));
-        return new GraphImpl<>(new HashSet<>(nodes), edges);
+        DirectedGraph<X> graph = (DirectedGraph<X>) createBidirectionalChain(nodes);
+        graph.addEdge(nodes.get(nodes.size() - 1), nodes.get(0));
+        graph.addEdge(nodes.get(0), nodes.get(nodes.size() - 1));
+        return graph;
     }
 
     @Override
     public <X> Graph<X> createDirectedStar(X center, Set<X> nodes) {
-        List<Pair<X,X>> edges = nodes.stream().map(n -> new Pair<>(center, n)).collect(Collectors.toList());
-        nodes.add(center);
-        return new GraphImpl<>(nodes, edges);
+        DirectedGraph<X> graph = new DirectedGraph<>(nodes);
+        graph.addNode(center);
+        for (X node : nodes) {
+            graph.addEdge(center, node);
+        }
+        return graph;
     }
 
     @Override
     public <X> Graph<X> createBidirectionalStar(X center, Set<X> nodes) {
-        List<Pair<X,X>> edges = nodes.stream().flatMap(n -> Stream.of(new Pair<>(n, center), new Pair<>(center, n))).collect(Collectors.toList());
-        nodes.add(center);
-        return new GraphImpl<>(nodes, edges);
+        DirectedGraph<X> graph = new DirectedGraph<>(nodes);
+        graph.addNode(center);
+        for (X node : nodes) {
+            graph.addEdge(center, node);
+            graph.addEdge(node, center);
+        }
+        return graph;
     }
 
     @Override
     public <X> Graph<X> createFull(Set<X> nodes) {
-        List<Pair<X,X>> edges = new ArrayList<>();
-        for(X node1 : nodes) {
-            for(X node2 : nodes) {
-                if(!node1.equals(node2)) {
-                    edges.add(new Pair<>(node1, node2));
-                }
-            }
-        }
-        return new GraphImpl<>(nodes, edges);
+        DirectedGraph<X> graph = new DirectedGraph<>(nodes);
+        for (X node1 : nodes)
+            for (X node2 : nodes)
+                if (!node1.equals(node2))
+                    graph.addEdge(node1, node2);
+        return graph;
     }
 
     @Override
     public <X> Graph<X> combine(Graph<X> g1, Graph<X> g2) {
-        Set<X> combinedNodes = new HashSet<>(g1.getNodes());
-        combinedNodes.addAll(g2.getNodes());
-
-        List<Pair<X,X>> combinedEdges = new ArrayList<>(g1.getEdgesStream().collect(Collectors.toList()));
-        combinedEdges.addAll(g2.getEdgesStream().collect(Collectors.toList()));
-
-        return new GraphImpl<>(combinedNodes,combinedEdges);
+        DirectedGraph<X> graph = new DirectedGraph<>(g1.getNodes());
+        graph.addNodes(g2.getNodes());
+        g1.getEdgesStream().forEach(edge -> graph.addEdge(edge.getFst(), edge.getSnd()));
+        g2.getEdgesStream().forEach(edge -> graph.addEdge(edge.getFst(), edge.getSnd()));
+        return graph;
     }
 
-    private <X> List<Pair<X,X>> getEdges(List<X> nodes, boolean bidirectional) {
-        List<Pair<X,X>> edges = new ArrayList<>();
-        for(int i=0; i<nodes.size()-1; i++) {
-            edges.add(new Pair<>(nodes.get(i), nodes.get(i+1)));
-            if(bidirectional) {
-                edges.add(new Pair<>(nodes.get(i+1), nodes.get(i)));
-            }
+    static class DirectedGraph<X> implements Graph<X> {
+
+        private Map<X, Set<X>> adjacencyList = new HashMap<>();
+
+        public DirectedGraph() {};
+
+        public DirectedGraph(Collection<X> nodes) {
+            for (X node : nodes) addNode(node);
         }
-        return edges;
-    }
 
-    private class GraphImpl<X> implements Graph<X> {
-        private final Set<X> nodes;
-        private final List<Pair<X, X>> edges;
+        public void addNode(X node) {
+            adjacencyList.putIfAbsent(node, new HashSet<>());
+        }
 
-        GraphImpl(Set<X> nodes, List<Pair<X, X>> edges) {
-            this.nodes = nodes;
-            this.edges = edges;
+        public void addNodes(Collection<X> nodes) {
+            for (X node : nodes) addNode(node);
+        }
+
+        public void addEdge(X start, X end) {
+            addNode(start);
+            adjacencyList.get(start).add(end);
         }
 
         @Override
         public Set<X> getNodes() {
-            return nodes;
+            return adjacencyList.keySet();
         }
 
         @Override
         public boolean edgePresent(X start, X end) {
-            return edges.contains(new Pair<>(start, end));
+            return adjacencyList.getOrDefault(start, Collections.emptySet()).contains(end);
         }
 
         @Override
         public int getEdgesCount() {
-            return edges.size();
+            return adjacencyList.values().stream().mapToInt(Set::size).sum();
         }
 
         @Override
         public Stream<Pair<X, X>> getEdgesStream() {
-            return edges.stream();
+            return adjacencyList.entrySet().stream()
+                    .flatMap(entry -> entry.getValue().stream().map(node -> new Pair<>(entry.getKey(), node)));
         }
     }
 }

@@ -5,39 +5,50 @@ import llmTests.a201401b.scala.{Aggregator, ProgressiveAcceptor, ProgressiveFilt
 import scala.collection.mutable
 
 class ProgressiveAcceptorImpl[X] extends ProgressiveAcceptor[X] {
+
   private var aggregator: Option[Aggregator[X]] = None
   private var progressiveFilter: Option[ProgressiveFilter[X]] = None
-  private var size: Int = 0
-  private var elements = mutable.Map[Int, X]()
+  private var size: Option[Int] = None
+  private var sequence: mutable.ArrayBuffer[X] = mutable.ArrayBuffer.empty[X]
 
-  def setAggregator(aggregator: Aggregator[X]): Unit = {
-    require(aggregator != null, "Aggregator cannot be null")
-    this.aggregator = Some(aggregator)
+  override def setProgressiveFilter(filter: ProgressiveFilter[X]): Unit =
+    if (filter != null) progressiveFilter = Some(filter)
+    else throw new NullPointerException
+
+  override def setAggregator(agg: Aggregator[X]): Unit =
+    if (agg != null) aggregator = Some(agg)
+    else throw new NullPointerException
+
+  override def setSize(s: Int): Unit =
+    if (s >= 0) size = Some(s)
+    else throw new IllegalArgumentException
+
+  override def accept(pos: Int, elem: X): Boolean = (progressiveFilter, aggregator, size) match {
+    case (Some(filter), Some(_), Some(s)) =>
+      if (0 <= pos && pos < s) {
+        if (pos >= sequence.length) {
+          sequence += elem
+          if (pos == 0 || filter.isNextOK(sequence(pos - 1), sequence(pos))) true
+          else {
+            sequence = sequence.dropRight(1)
+            false
+          }
+        } else {
+          val accept = if (pos == 0) true else filter.isNextOK(sequence(pos - 1), elem)
+          if (accept) {
+            sequence = sequence.take(pos) :+ elem
+          }
+          accept
+        }
+      } else false
+    case _ => throw new IllegalStateException("ProgressiveAcceptor is not properly initialized")
   }
 
-  def setProgressiveFilter(filter: ProgressiveFilter[X]): Unit = {
-    require(filter != null, "Filter cannot be null")
-    this.progressiveFilter = Some(filter)
-  }
-
-  def setSize(size: Int): Unit = {
-    require(size >= 0, "Size cannot be negative")
-    this.size = size
-  }
-
-  def accept(pos: Int, elem: X): Boolean = {
-    require(aggregator.isDefined, "Aggregator is not defined")
-    require(progressiveFilter.isDefined, "Filter is not defined")
-    require(size > 0, "Size is not defined")
-    if (pos >= size) return false
-    if (pos > 0 && elements.contains(pos - 1) && !progressiveFilter.get.isNextOK(elements(pos - 1), elem)) return false
-//    elements = elements.filterKeys(_ <= pos)
-//    elements(pos) = elem
-    true
-  }
-
-  def aggregateAll(): X = {
-    require(elements.nonEmpty, "There are no elements to aggregate")
-    elements.values.reduce(aggregator.get.aggregate)
+  override def aggregateAll(): X = aggregator match {
+    case Some(agg) =>
+      if (sequence.isEmpty) throw new IllegalStateException("Nothing to aggregate")
+      else if (sequence.length == 1) sequence.head
+      else sequence.reduceLeft(agg.aggregate)
+    case None => throw new NullPointerException("Aggregator is missing")
   }
 }

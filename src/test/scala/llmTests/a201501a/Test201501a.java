@@ -1,10 +1,10 @@
 package llmTests.a201501a;
 
-import static llmTests.a201501a.scala.CoursesCalendar.Day.*;
-import static llmTests.a201501a.scala.CoursesCalendar.Room.*;
-import llmTests.a201501a.scala.CoursesCalendar;
+import static llmTests.a201501a.java.CoursesCalendar.Day.*;
+import static llmTests.a201501a.java.CoursesCalendar.Room.*;
+import llmTests.a201501a.java.CoursesCalendar;
 import llmTests.shared.java.Pair;
-import llmTests.a201501a.scala.gpt4.CoursesCalendarImpl;
+import llmTests.a201501a.java.gpt4.CoursesCalendarImpl;
 
 import static org.junit.Assert.*;
 import static org.hamcrest.CoreMatchers.*;

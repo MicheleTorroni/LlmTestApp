@@ -5,31 +5,46 @@ import llmTests.a201701b.scala.Trace
 
 import java.util.{ArrayList, Iterator, Optional}
 
-class TraceImpl[X](private var events: ArrayList[Event[X]]) extends Trace[X] {
-  var currentIndex: Int = 0
-  override def nextEvent: Optional[Event[X]] =
-    if (currentIndex == events.size()) Optional.empty() else {
-      val event = events.get(currentIndex)
-      currentIndex += 1
+class TraceImpl[X](val events: ArrayList[Event[X]]) extends Trace[X] {
+  private var pos = 0
+
+  override def nextEvent: Optional[Event[X]] = {
+    if (pos < events.size()) {
+      val event: Event[X] = events.get(pos)
+      pos += 1
       Optional.of(event)
+    } else {
+      Optional.empty()
     }
-  override def iterator: Iterator[Event[X]] = events.iterator()
+  }
+
   override def skipAfter(time: Int): Unit = {
-    while (currentIndex < events.size() && events.get(currentIndex).getTime <= time) currentIndex += 1
+    while (pos < events.size() && events.get(pos).getTime < time) {
+      pos += 1
+    }
   }
+
   override def combineWith(trace: Trace[X]): Trace[X] = {
-    val list = new ArrayList[Event[X]](events)
-    trace.iterator.forEachRemaining(event => list.add(event))
-    list.sort((e1, e2) => Integer.compare(e1.getTime, e2.getTime))
-    new TraceImpl[X](list)
+    val combinedEvents = new ArrayList[Event[X]](events)
+    var event = trace.nextEvent
+    while (event.isPresent) {
+      combinedEvents.add(event.get())
+      event = trace.nextEvent
+    }
+    combinedEvents.sort((event1, event2) => event1.getTime - event2.getTime)
+    new TraceImpl(combinedEvents)
   }
+
   override def dropValues(value: X): Trace[X] = {
-    val list = new ArrayList[Event[X]]()
+    val filteredEvents = new ArrayList[Event[X]]
     for (i <- 0 until events.size()) {
       val event = events.get(i)
-      if (!event.getValue.equals(value)) list.add(event)
+      if (!event.getValue.equals(value)) {
+        filteredEvents.add(event)
+      }
     }
-    new TraceImpl[X](list)
+    new TraceImpl(filteredEvents)
   }
-}
 
+  override def iterator: Iterator[Event[X]] = events.iterator()
+}

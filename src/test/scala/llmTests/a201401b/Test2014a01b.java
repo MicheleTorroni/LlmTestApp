@@ -3,7 +3,7 @@ package llmTests.a201401b;
 import llmTests.a201401b.scala.Aggregator;
 import llmTests.a201401b.scala.ProgressiveAcceptor;
 import llmTests.a201401b.scala.ProgressiveFilter;
-import llmTests.a201401b.scala.gpt35turbo.ProgressiveAcceptorImpl;
+import llmTests.a201401b.scala.gpt4.ProgressiveAcceptorImpl;
 
 
 import static org.junit.Assert.*;
